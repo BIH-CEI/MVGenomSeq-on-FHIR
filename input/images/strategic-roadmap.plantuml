@@ -1,0 +1,85 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+
+title MVGENOMSEQ + FHIR Strategische Roadmap
+
+|2025-2026: Quick Wins|
+start
+:Ansatz 1 umsetzen:
+**FHIR → MVGENOMSEQ JSON**;
+note right
+  * FHIR-Server als Datenquelle
+  * Transformation zu JSON Schema
+  * Sofort umsetzbar
+  * National nutzbar
+end note
+
+:Ansatz 2 umsetzen:
+**MVGENOMSEQ JSON → DIZ FHIR**;
+note right
+  * Integration in DIZ-Repositorien
+  * Broad Consent nutzen
+  * Forschungszugriff via FHIR
+  * Genotyp-Phänotyp-Verknüpfung
+end note
+
+|2026-2027: R6 Vorbereitung|
+
+:FHIR R6 Ballot\nTeilnahme;
+note right
+  * Feedback an HL7
+  * Deutsche Anforderungen einbringen
+  * Genomics WG Beteiligung
+end note
+
+:GenomicStudy Resource\nEvaluierung;
+note right
+  **Neue R6 Features:**
+  * GenomicStudy Resource
+  * MolecularSequence v2
+  * GA4GH VRS Integration
+  * Phenopackets Alignment
+end note
+
+:Proof-of-Concept\nImplementierungen;
+note right
+  * PoCs mit R6 Candidate
+  * Test mit ausgewählten GRZs
+  * Profil-Entwicklung
+  * Mapping-Spezifikationen
+end note
+
+|2027-2028: FHIR-native Submission|
+
+:Pilotprojekte\nstarten;
+note right
+  * Ausgewählte Einrichtungen
+  * Parallelbetrieb JSON + FHIR
+  * Feedback sammeln
+  * Tooling entwickeln
+end note
+
+:Ansatz 3 rollout:
+**FHIR R6 Native Submission**;
+note right
+  * Vollständig FHIR-basiert
+  * GA4GH-aligned
+  * International interoperabel
+  * JSON als Legacy-Option
+end note
+
+|Langfristig (2028+)|
+
+:Internationale\nKollaborationen;
+note right
+  * GA4GH Beacon API
+  * Phenopackets Integration
+  * EU Health Data Space
+  * Global Genomic Data Sharing
+end note
+
+stop
+
+@enduml

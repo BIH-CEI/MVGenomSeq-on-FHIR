@@ -1,0 +1,83 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+
+title Ansatz 3: FHIR-native Meldung (R6 Zukunftsvision)
+
+participant "Krankenhaus\nFHIR R6 Server" as Hospital
+participant "MVGENOMSEQ\nSubmission Gateway" as Gateway
+participant "FHIR Validator" as Validator
+participant "Profile Checker" as Profile
+participant "BfArM MVGENOMSEQ\nFHIR Repository" as BfArM
+participant "Analytics\nEngine" as Analytics
+
+== Vorbereitung (Krankenhaus) ==
+
+Hospital -> Hospital: Erstelle Patient\n(MVGenomSeq-Patient-R6)
+Hospital -> Hospital: Erstelle Consent\n(MII Broad Consent)
+Hospital -> Hospital: Erstelle Condition\n(MVGenomSeq-Diagnose-R6)
+Hospital -> Hospital: Erstelle GenomicStudy\n**NEU in R6**
+Hospital -> Hospital: Erstelle MolecularSequence\n(GA4GH VRS aligned)
+Hospital -> Hospital: Erstelle Observations\n(MVGenomSeq-Variant-R6)
+Hospital -> Hospital: Erstelle DiagnosticReport\n(MVGenomSeq-Genomics-Report-R6)
+
+Hospital -> Hospital: Bundle erstellen\n(MVGenomSeq-Submission-Bundle)
+
+== Einreichung ==
+
+Hospital -> Gateway: POST Submission Bundle
+activate Gateway
+
+Gateway -> Validator: FHIR R6 Validierung
+activate Validator
+Validator -> Validator: Prüfe FHIR\nKonformität
+Validator --> Gateway: FHIR Valid
+deactivate Validator
+
+Gateway -> Profile: MVGenomSeq-Profil-Check
+activate Profile
+Profile -> Profile: Prüfe MVGenomSeq-Patient-R6
+Profile -> Profile: Prüfe MVGenomSeq-Diagnose-R6
+Profile -> Profile: Prüfe MVGenomSeq-GenomicStudy-R6
+Profile -> Profile: Prüfe MVGenomSeq-Variant-R6
+Profile -> Profile: Prüfe MVGenomSeq-Genomics-Report-R6
+Profile --> Gateway: Profile Valid
+deactivate Profile
+
+Gateway -> Gateway: Geschäftslogik\nValidierung
+
+Gateway -> Gateway: Consent-Prüfung
+
+== Speicherung ==
+
+Gateway -> BfArM: Store Bundle
+activate BfArM
+
+BfArM -> BfArM: Persistiere\nRessourcen
+BfArM -> BfArM: Indexiere für\nSuche
+
+BfArM --> Gateway: Submission ID
+deactivate BfArM
+
+Gateway --> Hospital: Success + Submission ID
+deactivate Gateway
+
+== Analytics & Forschung ==
+
+note over BfArM, Analytics
+  **Vorteile der FHIR-nativen Speicherung:**
+  - FHIR Search API
+  - CQL Queries
+  - GraphQL
+  - GA4GH API Kompatibilität
+end note
+
+BfArM -> Analytics: FHIR Data\n(direkt abfragbar)
+activate Analytics
+Analytics -> Analytics: Kohortenbildung\nvia CQL
+Analytics -> Analytics: Phänotyp-Genotyp\nAnalyse
+Analytics --> BfArM: Forschungsergebnisse
+deactivate Analytics
+
+@enduml

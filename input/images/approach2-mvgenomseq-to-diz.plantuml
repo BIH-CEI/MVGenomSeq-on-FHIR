@@ -1,0 +1,83 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+
+title Ansatz 2: Integration von MVGENOMSEQ-Daten in DIZ-Repositorien
+
+participant "MVGENOMSEQ\nQuelle" as MV
+participant "Ingestion\nService" as Ingest
+participant "Transformer" as Transform
+participant "Pseudonym\nService" as Pseudo
+participant "DIZ FHIR\nRepository" as DIZ
+participant "Consent\nManagement" as Consent
+
+== Dateneingang ==
+
+MV -> Ingest: KDK JSON + GRZ JSON
+activate Ingest
+
+Ingest -> Ingest: JSON Schema\nValidierung
+Ingest -> Ingest: Geschäftslogik\nValidierung
+
+== Consent-Prüfung ==
+
+Ingest -> Consent: Prüfe Broad Consent
+activate Consent
+Consent -> Consent: Validiere\nEinwilligung
+Consent --> Ingest: Consent Status: Active
+deactivate Consent
+
+alt Kein gültiger Consent
+    Ingest --> MV: Fehler: Consent erforderlich
+    destroy Ingest
+end
+
+== Pseudonymisierung ==
+
+Ingest -> Pseudo: Get Pseudonym\nfor Patient ID
+activate Pseudo
+Pseudo -> Pseudo: Prüfe existierendes\nPseudonym
+Pseudo --> Ingest: Pseudonym
+deactivate Pseudo
+
+== Transformation zu FHIR ==
+
+Ingest -> Transform: KDK + GRZ + Pseudonym
+activate Transform
+
+Transform -> Transform: Erstelle Patient\n(MII KDS Person)
+Transform -> Transform: Erstelle Consent\n(MII Consent)
+Transform -> Transform: Erstelle Conditions\n(MII Diagnose)
+Transform -> Transform: Erstelle Observations\n(MII Molgen)
+Transform -> Transform: Erstelle MedicationStatements\n(MII Onko)
+Transform -> Transform: Erstelle DiagnosticReport\n(Genomics Report)
+Transform -> Transform: Erstelle Provenance\n(Herkunftsnachweis)
+
+Transform --> Ingest: FHIR Transaction Bundle
+deactivate Transform
+
+== Persistierung ==
+
+Ingest -> DIZ: POST Bundle (Transaction)
+activate DIZ
+
+DIZ -> DIZ: Validiere FHIR\nRessourcen
+DIZ -> DIZ: Prüfe MII-Profile
+DIZ -> DIZ: Speichere Ressourcen
+
+DIZ --> Ingest: Transaction Response
+deactivate DIZ
+
+Ingest --> MV: Integration erfolgreich
+deactivate Ingest
+
+== Forschungszugriff ==
+
+note over DIZ
+  Forscher können nun über
+  FHIR Search API auf die
+  integrierten Daten zugreifen
+end note
+
+@enduml

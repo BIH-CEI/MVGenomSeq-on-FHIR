@@ -1,0 +1,71 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+
+title Ansatz 1: Generierung von MVGENOMSEQ-Daten aus FHIR
+
+participant "Krankenhaus\nFHIR Server" as FHIR
+participant "Extractor" as Extractor
+participant "Transformer" as Transformer
+participant "Validator" as Validator
+participant "MVGENOMSEQ\nSystem" as MV
+
+== Datenextraktion ==
+
+Extractor -> FHIR: Search Patient
+activate FHIR
+FHIR --> Extractor: Patient Resource (MII KDS)
+deactivate FHIR
+
+Extractor -> FHIR: Search Conditions
+activate FHIR
+FHIR --> Extractor: Condition Resources (MII Diagnose)
+deactivate FHIR
+
+Extractor -> FHIR: Search Observations\n(Genomics)
+activate FHIR
+FHIR --> Extractor: Observation Resources (MII Molgen)
+deactivate FHIR
+
+Extractor -> FHIR: Search MedicationStatements
+activate FHIR
+FHIR --> Extractor: MedicationStatement Resources (MII Onko)
+deactivate FHIR
+
+== Transformation ==
+
+Extractor -> Transformer: FHIR Bundle
+activate Transformer
+
+Transformer -> Transformer: Transform Patient\n→ MVGenomSeq Patient
+Transformer -> Transformer: Transform Conditions\n→ MVGenomSeq Diagnosen
+Transformer -> Transformer: Transform Observations\n→ MVGenomSeq Molekularbefunde
+Transformer -> Transformer: Transform Medications\n→ MVGenomSeq Therapien
+
+Transformer --> Extractor: KDK JSON + GRZ JSON
+deactivate Transformer
+
+== Validierung ==
+
+Extractor -> Validator: KDK JSON
+activate Validator
+Validator -> Validator: JSON Schema\nValidierung
+Validator --> Extractor: Validation Result
+deactivate Validator
+
+Extractor -> Validator: GRZ JSON
+activate Validator
+Validator -> Validator: JSON Schema\nValidierung
+Validator --> Extractor: Validation Result
+deactivate Validator
+
+== Einreichung ==
+
+Extractor -> MV: Submit KDK + GRZ
+activate MV
+MV -> MV: Empfang und\nVerarbeitung
+MV --> Extractor: Submission Confirmation
+deactivate MV
+
+@enduml

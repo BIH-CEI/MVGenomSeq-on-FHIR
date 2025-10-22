@@ -1,0 +1,38 @@
+# OS specific
+.DS_Store
+Thumbs.db
+
+# FHIR IG Publisher outputs
+/fsh-generated
+/input-cache
+/output
+/temp
+/template
+qa.html
+qa.txt
+
+# Node modules
+node_modules/
+package-lock.json
+
+# Java
+*.jar
+!input-cache/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# PlantUML generated images (optional)
+input/images/*.png
+input/images/*.svg
+
+# Local configuration
+.env
