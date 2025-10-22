@@ -42,6 +42,10 @@ Aktueller Zustand (R4):           Zukünftiger Zustand (R6):
 ### Ziel-Szenario
 Anstatt JSON-Schema-basierte MVGENOMSEQ-Datensätze zu erstellen, würden Teilnehmer direkt FHIR-Ressourcen einreichen, die den MVGENOMSEQ-Anforderungen entsprechen.
 
+### Prozessübersicht
+
+{% include img.html img="approach3-fhir-native-r6.png" caption="Abbildung 1: FHIR R6 Native Submission Prozess" %}
+
 ### Systemarchitektur
 
 ```

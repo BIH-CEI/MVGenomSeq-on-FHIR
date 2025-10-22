@@ -42,6 +42,22 @@ jobs:
         run: |
           npm install -g fsh-sushi
 
+      - name: Install PlantUML
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y plantuml
+
+      - name: Render PlantUML Diagrams
+        run: |
+          mkdir -p input/images-source
+          if [ -d "input/images-source" ] && [ "$(ls -A input/images-source/*.plantuml 2>/dev/null)" ]; then
+            plantuml -tpng input/images-source/*.plantuml -o ../images/
+          fi
+          # Also render any .plantuml files in input/images if they exist
+          if [ -d "input/images" ] && [ "$(ls -A input/images/*.plantuml 2>/dev/null)" ]; then
+            plantuml -tpng input/images/*.plantuml
+          fi
+
       - name: Download IG Publisher
         run: |
           mkdir -p input-cache

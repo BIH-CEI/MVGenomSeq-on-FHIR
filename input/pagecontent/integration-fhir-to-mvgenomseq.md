@@ -18,6 +18,10 @@ Ein Universitätsklinikum hat im Rahmen der Medizininformatik-Initiative bereits
 
 ## Architekturprinzipien
 
+### Prozessübersicht
+
+{% include img.html img="approach1-fhir-to-mvgenomseq.png" caption="Abbildung 1: Prozessablauf für die Generierung von MVGENOMSEQ-Daten aus FHIR" %}
+
 ### 1. FHIR als Datenquelle
 ```
 FHIR Server (MII KDS)  →  Transformation Engine  →  MVGENOMSEQ JSON
@@ -31,6 +35,16 @@ FHIR Server (MII KDS)  →  Transformation Engine  →  MVGENOMSEQ JSON
 - Validierung der Quell-FHIR-Daten gegen MII-Profile
 - Validierung der Ziel-MVGENOMSEQ-Daten gegen JSON Schema
 - Vollständigkeitsprüfung (Required Fields)
+
+## MII Oncology LogicalModel
+
+Das MII Oncology Modul enthält bereits ein **LogicalModel für MVGENOMSEQ Onkologie**:
+
+- **Canonical URL**: `https://www.medizininformatik-initiative.de/fhir/ext/modul-onko/StructureDefinition/LogicalModel/mii-lm-mvgenomseq-onkologie`
+- **Package**: `de.medizininformatikinitiative.kerndatensatz.onkologie` (2026.0.0-ballot)
+- **Simplifier**: [MII LM MVGENOMSEQ Onkologie](https://simplifier.net/packages/de.medizininformatikinitiative.kerndatensatz.onkologie/2026.0.0-ballot/files/2957340)
+
+Dieses LogicalModel definiert die Struktur für MVGENOMSEQ-Onkologie-Daten und dient als Referenz für die Transformation.
 
 ## Detailliertes Mapping: FHIR → MVGENOMSEQ
 

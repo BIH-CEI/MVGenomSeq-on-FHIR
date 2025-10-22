@@ -72,28 +72,7 @@ Langfristige Standardisierung, bei der KDK und GRZ direkt als FHIR-Ressourcen ge
 
 ## Strategische Roadmap
 
-```
-2025-2026: Quick Wins
-┌─────────────────────────────────────┐
-│ Ansatz 1: FHIR → MVGENOMSEQ JSON   │
-│ Ansatz 2: MVGENOMSEQ JSON → FHIR   │
-└─────────────────────────────────────┘
-                ↓
-2026-2027: R6 Vorbereitung
-┌─────────────────────────────────────┐
-│ - R6 Ballot Teilnahme              │
-│ - Proof-of-Concepts                │
-│ - Profil-Entwicklung               │
-└─────────────────────────────────────┘
-                ↓
-2027-2028: FHIR-native Submission
-┌─────────────────────────────────────┐
-│ Ansatz 3: FHIR R6 native           │
-│ - GA4GH-Alignment                  │
-│ - GenomicStudy Resource            │
-│ - Internationale Interoperabilität │
-└─────────────────────────────────────┘
-```
+{% include img.html img="strategic-roadmap.png" caption="Abbildung 1: Strategische Roadmap für MVGENOMSEQ und FHIR Integration" %}
 
 ## Vergleich der Ansätze
 

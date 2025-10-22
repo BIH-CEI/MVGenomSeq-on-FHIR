@@ -48,14 +48,17 @@ dependencies:
 # with supported extensions (e.g., .md/.xml) will be treated as
 # sub-pages.
 #
-# pages:
-#   index.md:
-#     title: Example Home
-#   implementation.xml:
-#   examples.xml:
-#     title: Examples Overview
-#     simpleExamples.xml:
-#     complexExamples.xml:
+pages:
+  index.md:
+    title: Home
+  integration.md:
+    title: Integrationsansätze Übersicht
+  integration-fhir-to-mvgenomseq.md:
+    title: "Ansatz 1: FHIR → MVGENOMSEQ"
+  integration-diz-repository.md:
+    title: "Ansatz 2: MVGENOMSEQ → DIZ"
+  integration-fhir-submission.md:
+    title: "Ansatz 3: FHIR R6 Native"
 #
 #
 # The parameters property represents IG.definition.parameter. Rather

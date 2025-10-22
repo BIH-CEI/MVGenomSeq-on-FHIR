@@ -16,6 +16,10 @@ DIZs möchten:
 ### Beispielszenario
 Ein DIZ hat bereits ein umfangreiches FHIR-basiertes Data Warehouse mit MII-Kerndatensatz-Daten (Person, Diagnose, Prozeduren, Laborbefunde). Durch die Teilnahme am MVGENOMSEQ-Programm kommen nun standardisierte genomische Datensätze hinzu. Diese sollen in das bestehende Repository integriert werden, sodass Forscher über eine einheitliche FHIR-API auf beide Datenquellen zugreifen können.
 
+## Prozessübersicht
+
+{% include img.html img="approach2-mvgenomseq-to-diz.png" caption="Abbildung 1: Integrationsprozess von MVGENOMSEQ-Daten in DIZ-Repositorien" %}
+
 ## Rechtliche Grundlagen: Broad Consent
 
 ### Was ermöglicht der Broad Consent?
