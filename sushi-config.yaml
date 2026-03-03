@@ -3,33 +3,34 @@
 # │  used properties are included. For a list of all supported properties and their functions,     │
 # │  see: https://fshschool.org/docs/sushi/configuration/.                                         │
 # ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-id: fhir.example
-canonical: http://example.org
+id: de.bih-charite.mvgenomseq
+canonical: https://bih-cei.github.io/MVGenomSeq-on-FHIR
 name: MVGenomSeqOnFHIR
-# title: Example Title
-# description: Example Implementation Guide for getting started with SUSHI
-status: draft # draft | active | retired | unknown
+title: "MVGenomSeq on FHIR Implementation Guide"
+description: "FHIR Implementation Guide für die Modellvorhaben Genomsequenzierung (§ 64e SGB V). Bildet die Kerndatenstrukturen für Onkologie und Seltene Erkrankungen als FHIR-Profile ab."
+status: draft
 version: 0.1.0
-fhirVersion: 4.0.1 # https://www.hl7.org/fhir/valueset-FHIR-version.html
+fhirVersion: 4.0.1
 copyrightYear: 2025+
 releaseLabel: ci-build
-# license: CC0-1.0 # https://www.hl7.org/fhir/valueset-spdx-license.html
-# jurisdiction: urn:iso:std:iso:3166#US "United States of America" # https://www.hl7.org/fhir/valueset-jurisdiction.html
+license: CC-BY-4.0
+jurisdiction: urn:iso:std:iso:3166#DE "Germany"
 publisher:
-  name: Example Publisher
-  url: http://example.org/example-publisher
-  # email: test@example.org
+  name: Berlin Institute of Health at Charité
+  url: https://www.bihealth.org/
 
 # The dependencies property corresponds to IG.dependsOn. The key is the
 # package id and the value is the version (or dev/current). For advanced
 # use cases, the value can be an object with keys for id, uri, and version.
 #
 dependencies:
-    de.medizininformatikinitiative.kerndatensatz.person: 2025.x
-    de.medizininformatikinitiative.kerndatensatz.diagnose: 2025.x
+    de.medizininformatikinitiative.kerndatensatz.base: 2026.0.0
+    de.medizininformatikinitiative.kerndatensatz.consent: 2026.0.1-rc-1
     de.medizininformatikinitiative.kerndatensatz.molgen: 2026.0.0-ballot
     de.medizininformatikinitiative.kerndatensatz.onkologie: 2026.0.0-ballot
     de.medizininformatikinitiative.kerndatensatz.seltene: 2026.0.0-ballot
+    de.medizininformatikinitiative.kerndatensatz.mtb: 2026.0.0
+    hl7.fhir.uv.genomics-reporting: 3.0.0
 #   hl7.fhir.us.core: 3.1.0
 #   hl7.fhir.us.mcode:
 #     id: mcode
