@@ -47,58 +47,17 @@ jobs:
         run: gem install jekyll
 
       - name: Install SUSHI
-        run: |
-          npm install -g fsh-sushi
-
-      - name: Install PlantUML
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y plantuml
-
-      - name: Render PlantUML Diagrams
-        run: |
-          set -e  # Exit on error
-          echo "Starting PlantUML rendering..."
-
-          # Check if plantuml files exist
-          if [ -d "input/images" ] && compgen -G "input/images/*.plantuml" > /dev/null; then
-            echo "Found PlantUML files in input/images"
-            ls -la input/images/*.plantuml
-
-            # Render each file individually with error logging
-            for file in input/images/*.plantuml; do
-              echo "Rendering: $file"
-              if plantuml -tsvg "$file" 2>&1 | tee plantuml-error.log; then
-                echo "✓ Successfully rendered: $file"
-              else
-                echo "✗ Failed to render: $file"
-                cat plantuml-error.log
-                exit 1
-              fi
-            done
-          else
-            echo "No PlantUML files found in input/images"
-          fi
-
-          echo "PlantUML rendering complete"
-        continue-on-error: false
+        run: npm install -g fsh-sushi
 
       - name: Download IG Publisher
         run: |
           mkdir -p input-cache
           curl -L https://github.com/HL7/fhir-ig-publisher/releases/latest/download/publisher.jar -o input-cache/publisher.jar
 
-      - name: Run SUSHI
-        run: |
-          echo "Running SUSHI..."
-          sushi . 2>&1 | tee sushi-build.log
-          echo "SUSHI completed"
-
       - name: Run IG Publisher
         run: |
-          echo "Running IG Publisher..."
+          export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Dfile.encoding=UTF-8"
           java -jar input-cache/publisher.jar -ig . 2>&1 | tee ig-publisher.log
-          echo "IG Publisher completed"
 
       - name: Upload Build Logs
         if: always()
@@ -106,11 +65,10 @@ jobs:
         with:
           name: build-logs
           path: |
-            sushi-build.log
             ig-publisher.log
-            plantuml-error.log
             output/qa.html
             output/qa.txt
+            output/qa.min.html
           retention-days: 30
 
       - name: Upload artifact
