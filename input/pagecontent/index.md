@@ -33,7 +33,6 @@ Dieser IG beschreibt drei komplementäre Ansätze mit unterschiedlichen Zeithori
 
 - **Krankenhäuser und Kliniken**: Die an MVGenomSeq teilnehmen und MII-konforme FHIR-Infrastruktur betreiben
 - **Datenintegrationszentren (DIZ)**: Die MVGenomSeq-Patienten in ihre Forschungsinfrastruktur integrieren möchten
-- **Genomreferenzzentren (GRZ)**: Die zukünftig FHIR-basierte Einreichungen unterstützen möchten
 - **Softwareentwickler**: Die Transformations- und Integrationslösungen implementieren
 
 ## Technische Grundlagen
@@ -41,7 +40,7 @@ Dieser IG beschreibt drei komplementäre Ansätze mit unterschiedlichen Zeithori
 ### Standards
 - **FHIR R4** (4.0.1) — Basisversion dieses IG
 - **MII-Kerndatensatz 2026** — Deutsche FHIR-Profile für medizinische Forschungsdaten
-- **MVGenomSeq** — JSON-Schema-Draft-2020-12-basiertes Übermittlungsformat (KDK + GRZ)
+- **MVGenomSeq KDK v2.3** — JSON-Schema-basiertes Übermittlungsformat (KDK + GRZ)
 
 ### MII-Abhängigkeiten
 
