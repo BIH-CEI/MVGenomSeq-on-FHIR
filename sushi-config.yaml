@@ -26,9 +26,9 @@ publisher:
 dependencies:
     de.medizininformatikinitiative.kerndatensatz.base: 2026.0.0
     de.medizininformatikinitiative.kerndatensatz.consent: 2026.0.1-rc-1
-    de.medizininformatikinitiative.kerndatensatz.molgen: 2026.0.0-ballot
-    de.medizininformatikinitiative.kerndatensatz.onkologie: 2026.0.0-ballot
-    de.medizininformatikinitiative.kerndatensatz.seltene: 2026.0.0-ballot
+    de.medizininformatikinitiative.kerndatensatz.molgen: 2026.0.4
+    de.medizininformatikinitiative.kerndatensatz.onkologie: 2026.0.3-rc.1
+    de.medizininformatikinitiative.kerndatensatz.seltene: 2026.0.0
     de.medizininformatikinitiative.kerndatensatz.mtb: 2026.0.0
     hl7.fhir.uv.genomics-reporting: 3.0.0
 #   hl7.fhir.us.core: 3.1.0
@@ -90,7 +90,7 @@ menu:
     "Ansatz 1: FHIR zu MVGENOMSEQ": integration-fhir-to-mvgenomseq.html
     "Ansatz 2: MVGENOMSEQ zu DIZ": integration-diz-repository.html
     "Ansatz 3: FHIR-native (R6)": integration-fhir-submission.html
-  Artifacts: artifacts.html
+#  Artifacts: artifacts.html
 
 # ╭───────────────────────────Less Common Implementation Guide Properties──────────────────────────╮
 # │  Uncomment the properties below to configure additional properties on the ImplementationGuide  │

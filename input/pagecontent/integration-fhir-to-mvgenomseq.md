@@ -8,13 +8,15 @@ Dieser Ansatz beschreibt die **Transformation von bereits vorhandenen FHIR-Resso
 
 ### Primäranwendungsfall
 Krankenhäuser und medizinische Einrichtungen, die:
-- Bereits FHIR-Server (z.B. HAPI FHIR) betreiben
+- Bereits FHIR-Server (z.B. Blaze, SMILE CDR) betreiben
 - MII-Kerndatensatz-konforme Daten vorhalten
 - An MVGENOMSEQ teilnehmen möchten
 - Ihre bestehenden FHIR-Daten für MVGENOMSEQ-Einreichungen aufbereiten müssen
 
 ### Beispielszenario
-Ein Universitätsklinikum hat im Rahmen der Medizininformatik-Initiative bereits alle onkologischen und genomischen Daten in FHIR strukturiert (Patient, Condition, Observation mit Genomik-Profilen, MedicationStatement). Für die Teilnahme am MVGENOMSEQ-Programm müssen diese Daten in das vorgeschriebene JSON-Schema-Format konvertiert werden.
+Ein Universitätsklinikum betreibt im Rahmen der Medizininformatik-Initiative bereits einen FHIR-Server mit MII-KDS-konformen Daten: Patientenstammdaten, Diagnosen (Condition), molekulargenetische Befunde (Observation/MolGen) und Medikationen liegen strukturiert vor. Für die Teilnahme am Modellvorhaben Genomsequenzierung müssen diese Daten in das vorgeschriebene Übermittlungsformat überführt werden.
+
+Der Großteil der benötigten Informationen lässt sich direkt aus dem bestehenden FHIR-Datenbestand ableiten. Einige Elemente — insbesondere MTB-spezifische Angaben wie Therapieempfehlungen oder der Verlauf nach MTB-Beschluss — liegen typischerweise noch nicht strukturiert vor und müssen zusätzlich dokumentiert werden. Um Doppelerfassung zu vermeiden und die Nachnutzbarkeit der Daten zu gewährleisten, wurde beschlossen, auf einen **FHIR-first-Ansatz** zu setzen: Die fehlenden Daten werden direkt als FHIR-Ressourcen — konform zu den MII-MTB-Profilen (z.B. `mii-pr-mtb-therapieplan`) — erfasst und anschließend gemeinsam mit den Bestandsdaten in das Übermittlungsformat transformiert.
 
 ## Architekturprinzipien
 
@@ -41,8 +43,8 @@ FHIR Server (MII KDS)  →  Transformation Engine  →  MVGENOMSEQ JSON
 Das MII Oncology Modul enthält bereits ein **LogicalModel für MVGENOMSEQ Onkologie**:
 
 - **Canonical URL**: `https://www.medizininformatik-initiative.de/fhir/ext/modul-onko/StructureDefinition/LogicalModel/mii-lm-mvgenomseq-onkologie`
-- **Package**: `de.medizininformatikinitiative.kerndatensatz.onkologie` (2026.0.0-ballot)
-- **Simplifier**: [MII LM MVGENOMSEQ Onkologie](https://simplifier.net/packages/de.medizininformatikinitiative.kerndatensatz.onkologie/2026.0.0-ballot/files/2957340)
+- **Package**: `de.medizininformatikinitiative.kerndatensatz.onkologie` (2026.0.4)
+- **Simplifier**: [MII LM MVGENOMSEQ Onkologie](https://simplifier.net/packages/de.medizininformatikinitiative.kerndatensatz.onkologie/2026.0.4/files/2957340)
 
 Dieses LogicalModel definiert die Struktur für MVGENOMSEQ-Onkologie-Daten und dient als Referenz für die Transformation.
 
@@ -690,15 +692,16 @@ async function exportAllOnkologiePatienten() {
 
 ### Ressourcen-Mapping
 
-| FHIR Resource | MII Profil | MVGENOMSEQ KDK Ziel |
-|---------------|------------|---------------------|
-| Patient | MII KDS Person | patient |
-| Condition | MII KDS Diagnose | diagnosen[] |
-| Observation (Genomics) | MII KDS Molekulargenetik - Variante | molekulareBefunde[] |
-| MedicationStatement | MII KDS Onkologie - Systemtherapie | therapien[] |
-| Observation (Follow-up) | MII KDS Onkologie - Verlauf | verlauf[] |
-| Consent | MII KDS Consent | einwilligung |
-| DiagnosticReport | Custom | GRZ.sequenzierung |
+| FHIR Resource | MII Profil | Paket (2026) | MVGENOMSEQ KDK Ziel |
+|---------------|------------|--------------|---------------------|
+| Patient | MII PR Person Patient Pseudonymisiert | `base` 2026.0.0 | patient |
+| Condition (Onkologie) | MII PR MTB Diagnose Primärtumor | `mtb` 2026.0.0 | diagnosen[] |
+| Condition (Seltene Erkrankungen) | MII PR Diagnose Condition | `base` 2026.0.0 | diagnosen[] |
+| Observation (Variante, Onkologie) | MII PR MTB Einfache Variante | `mtb` 2026.0.0 | molekulareBefunde[] |
+| Observation (Variante, SE) | MII PR MolGen Variante | `molgen` 2026.0.4 | molekulareBefunde[] |
+| Observation (Follow-up) | MII PR MTB Verlauf (in Entwicklung) | `mtb` 2026.0.0 | verlauf[] |
+| Consent | MII PR Consent Einwilligung | `consent` 2026.0.1-rc-1 | einwilligung |
+| DiagnosticReport | MII PR MolGen Diagnostik (in Entwicklung) | `molgen` 2026.0.4 | GRZ.sequenzierung |
 
 ### Datenfeld-Mapping
 
@@ -812,7 +815,7 @@ describe('FHIR to MVGENOMSEQ Transformation', () => {
 ## Werkzeuge und Bibliotheken
 
 ### Empfohlene Tools
-- **HAPI FHIR Client**: Java/TypeScript Client für FHIR-Server-Zugriff
+- **FHIR-Client** (z.B. [fhir-kit-client](https://github.com/Vermonster/fhir-kit-client) für Node.js, [hapifhir](https://hapifhir.io/) für Java): Client-Bibliothek für FHIR-Server-Zugriff (kompatibel mit Blaze, SMILE CDR u.a.)
 - **Ajv (Another JSON Schema Validator)**: JSON Schema Validierung
 - **fhir-kit-client**: JavaScript FHIR Client
 - **TypeScript**: Type-Safety für Transformationen

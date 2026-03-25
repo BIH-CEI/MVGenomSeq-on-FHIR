@@ -3,3 +3,35 @@
 # Add warning and/or information messages here after you've confirmed that they aren't really a problem
 # (And include comments like this justifying why)
 # See https://github.com/FHIR/sample-ig/blob/master/input/ignoreWarnings.txt for examples
+
+# hl7.fhir.uv.subscriptions-backport ist eine transitive Abhängigkeit von genomics-reporting STU3
+# und für R4B gebaut. Wir nutzen subscriptions-backport nicht direkt.
+This IG is for FHIR version 4.0.1, while the package 'hl7.fhir.uv.subscriptions-backport
+
+# Lokaler Tx-Server (localhost:3000) kann code/system-Paare nicht auflösen — kein echtes Validierungsproblem
+A code/system pair must be provided
+Error from http://localhost:3000
+
+# LOINC LA-Codes für Chromosom-Answers (LA21255-4 ff.) — valide LOINC Answer List Codes,
+# vom lokalen Tx-Server nicht erkannt
+Der Code LA2125 ist im System http://loinc.org nicht gültig
+ist im System http://loinc.org nicht gültig
+
+# Broken links aus MII-upstream-Profilen (sequencing.html) — können wir nicht fixen
+The link 'sequencing.html
+
+# SNOMED Display Names aus MII-MTB-Elternprofil (britisches Englisch vs. US-Englisch) — nicht änderbar
+Wrong Display Name 'WHO grade for central nervous system tumor'
+Wrong Display Name 'Histologic type of proliferative mass'
+
+# HGVS- und LOINC-Codes in Beispielinstanzen — Tx-Server erkennt sie nicht, inhaltlich korrekt
+Keiner der bereitgestellten Codes ist im ValueSet 'Human Genome Variation Society
+Unknown code 'p.Ser2466Leu'
+Unknown code 'LA21266-1'
+Keiner der bereitgestellten Codes ist im ValueSet 'LOINC Answer Codes for LL2938-0'
+
+# IG-Dependency-URL-Format für genomics-reporting — upstream, nicht änderbar
+The URL should refer directly to the ImplementationGuide resource
+
+# identifier.value muss URI sein bei system=urn:ietf:rfc:3986 — aus MII-upstream-StructureDefinition
+Lautet identifier.system 'urn:ietf:rfc:3986'
