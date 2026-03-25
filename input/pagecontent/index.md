@@ -1,66 +1,66 @@
-# MVGENOMSEQ on FHIR Implementation Guide
+# MVGenomSeq on FHIR Implementation Guide
 
 ## Einleitung
 
-Dieser Implementation Guide beschreibt die Integration des **MVGENOMSEQ-Datensatzes** (Modellvorhaben Genomsequenzierung) mit **FHIR** (Fast Healthcare Interoperability Resources).
+Dieser Implementation Guide ist eine **Community-Vorarbeit** zur Unterstützung von Mapping-Aktivitäten rund um das Modellvorhaben Genomsequenzierung (§ 64e SGB V). Er ist **nicht normativ** — die verbindliche Spezifikation des Übermittlungsformats liegt beim BfArM.
 
-Das Modellvorhaben Genomsequenzierung ist eine Initiative des Bundesinstituts für Arzneimittel und Medizinprodukte (BfArM) zur Standardisierung genomischer Daten in Deutschland. Dieser IG zeigt, wie MVGENOMSEQ-Daten mit FHIR-Standards und insbesondere dem MII-Kerndatensatz integriert werden können.
+Ziel dieses IG ist es:
 
-## Drei Integrationsansätze
+1. **Community-Mapping-Aktivitäten zu unterstützen**: Einrichtungen, die bestehende MII-KDS-Daten für MVGenomSeq-Einreichungen nutzen oder MVGenomSeq-Daten in ihre FHIR-Infrastruktur integrieren möchten, erhalten hier eine strukturierte Referenz für die Datenabbildung.
 
-Dieser IG präsentiert drei komplementäre Ansätze mit unterschiedlichen Zeithorizonten:
+2. **Vorarbeit für eine künftige FHIR-basierte Meldung zu leisten**: Perspektivisch könnte die Meldung an MVGenomSeq direkt in FHIR erfolgen. Dieser IG dokumentiert, wie eine solche Abbildung aussehen könnte — als Diskussionsgrundlage und Vorbereitung.
 
-### 🚀 Quick Wins (Sofort umsetzbar)
+Das Modellvorhaben Genomsequenzierung wird durch das Bundesinstitut für Arzneimittel und Medizinprodukte (BfArM) koordiniert und definiert standardisierte Datenstrukturen für die genomische Diagnostik in Deutschland — für die Onkologie und für Seltene Erkrankungen.
 
-1. **[Ansatz 1: FHIR → MVGENOMSEQ](integration-fhir-to-mvgenomseq.html)**
-   Generierung von MVGENOMSEQ-JSON-Datensätzen aus existierenden FHIR-Daten (MII-Kerndatensatz)
+## Integrationsansätze
 
-2. **[Ansatz 2: MVGENOMSEQ → DIZ](integration-diz-repository.html)**
-   Integration von MVGENOMSEQ-Daten in bestehende DIZ-FHIR-Repositorien unter Nutzung des Broad Consent
+Dieser IG beschreibt drei komplementäre Ansätze mit unterschiedlichen Zeithorizonten:
 
-### 🔮 Zukunftsstrategie (2027-2028)
+### Kurzfristig umsetzbar
 
-3. **[Ansatz 3: FHIR R6 Native](integration-fhir-submission.html)**
-   FHIR-native Meldung mit GA4GH-Alignment, wartend auf FHIR R6 mit verbesserter Genomik-Unterstützung
+1. **[Ansatz 1: MII-KDS als Datenquelle](integration-fhir-to-mvgenomseq.html)**
+   Befüllung des MVGenomSeq-Datenkranzes (KDK/GRZ) aus bestehenden MII-KDS-FHIR-Daten, ergänzt durch neu erfasste MTB-spezifische Daten (FHIR-first).
+
+2. **[Ansatz 2: MVGenomSeq-Patienten ins DIZ](integration-diz-repository.html)**
+   Integration von MVGenomSeq-Patienten in das FHIR-Repository des DIZ auf Basis des Broad Consent — für Forschung und Genotyp-Phänotyp-Analysen.
+
+### Langfristige Perspektive
+
+3. **[Ansatz 3: FHIR-native Meldung](integration-fhir-submission.html)**
+   Vollständig FHIR-basierte Einreichung an MVGenomSeq, perspektivisch mit FHIR R6 und GA4GH-Alignment.
 
 ## Für wen ist dieser IG?
 
-- **Krankenhäuser und Kliniken**: Die an MVGENOMSEQ teilnehmen und bereits FHIR-Systeme betreiben
-- **Datenintegrationszentren (DIZ)**: Die MVGENOMSEQ-Daten in ihre Forschungsinfrastruktur integrieren möchten
+- **Krankenhäuser und Kliniken**: Die an MVGenomSeq teilnehmen und MII-konforme FHIR-Infrastruktur betreiben
+- **Datenintegrationszentren (DIZ)**: Die MVGenomSeq-Patienten in ihre Forschungsinfrastruktur integrieren möchten
 - **Genomreferenzzentren (GRZ)**: Die zukünftig FHIR-basierte Einreichungen unterstützen möchten
-- **Forschende**: Die einheitlichen Zugriff auf klinische und genomische Daten benötigen
 - **Softwareentwickler**: Die Transformations- und Integrationslösungen implementieren
 
 ## Technische Grundlagen
 
 ### Standards
-- **FHIR R4**: Aktuelle Basisversion (4.0.1)
-- **FHIR R6**: Zukünftige Version mit verbesserter Genomik-Unterstützung (ab 2026)
-- **MII-Kerndatensatz**: Deutsche FHIR-Profile für medizinische Forschungsdaten
-- **MVGENOMSEQ**: JSON Schema Draft 2020-12 basierte Datenstrukturen
-- **GA4GH**: Global Alliance for Genomics and Health Standards
+- **FHIR R4** (4.0.1) — Basisversion dieses IG
+- **MII-Kerndatensatz 2026** — Deutsche FHIR-Profile für medizinische Forschungsdaten
+- **MVGenomSeq** — JSON-Schema-Draft-2020-12-basiertes Übermittlungsformat (KDK + GRZ)
 
-### Abhängigkeiten
-Dieser IG nutzt die folgenden MII-Module:
-- Person (2025.x)
-- Diagnose (2025.x)
-- Molekulargenetik (2026.0.0-ballot)
-- Onkologie (2026.0.0-ballot)
-- Seltene Erkrankungen (2026.0.0-ballot)
+### MII-Abhängigkeiten
 
-## Nächste Schritte
-
-1. **[Überblick lesen](integration.html)**: Verstehen Sie die drei Integrationsansätze
-2. **Ansatz wählen**: Entscheiden Sie basierend auf Ihren Anforderungen und Zeithorizont
-3. **Implementierung**: Nutzen Sie die detaillierten technischen Beschreibungen und Beispiele
+| MII-Paket | Version |
+|---|---|
+| `base` (Person, Diagnose, Prozedur, Fall) | 2026.0.0 |
+| `consent` | 2026.0.1-rc-1 |
+| `molgen` | 2026.0.4 |
+| `onkologie` | 2026.0.3-rc.1 |
+| `seltene` | 2026.0.0 |
+| `mtb` | 2026.0.0 |
 
 ## Ressourcen
 
-- [BfArM MVGENOMSEQ Technische Spezifikation](https://www.bfarm.de/SharedDocs/Downloads/DE/Forschung/modellvorhaben-genomsequenzierung/Techn-spezifikation-datensatz-mvgenomseq.pdf)
+- [BfArM MVGenomSeq Technische Spezifikation](https://www.bfarm.de/SharedDocs/Downloads/DE/Forschung/modellvorhaben-genomsequenzierung/Techn-spezifikation-datensatz-mvgenomseq.pdf)
 - [MVGenomseq_KDK Repository](https://github.com/BfArM-MVH/MVGenomseq_KDK)
 - [MVGenomseq_GRZ Repository](https://github.com/BfArM-MVH/MVGenomseq_GRZ)
 - [MII Kerndatensatz](https://www.medizininformatik-initiative.de/de/der-kerndatensatz-der-medizininformatik-initiative)
 
 ## Kontakt und Beitragen
 
-Dieses ist ein Community-Projekt. Feedback und Beiträge sind willkommen!
+Dieses ist ein Community-Projekt. Feedback und Beiträge sind willkommen über das [GitHub-Repository](https://github.com/BIH-CEI/MVGenomSeq-on-FHIR).

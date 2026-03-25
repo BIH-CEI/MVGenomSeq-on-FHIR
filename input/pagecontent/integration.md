@@ -2,7 +2,12 @@
 
 ## Überblick
 
-Dieses Implementation Guide beschreibt drei verschiedene Ansätze zur Integration des MVGENOMSEQ-Datensatzes (Modellvorhaben Genomsequenzierung) mit FHIR (Fast Healthcare Interoperability Resources). Der MVGENOMSEQ-Datensatz wurde vom Bundesinstitut für Arzneimittel und Medizinprodukte (BfArM) entwickelt und definiert standardisierte Datenstrukturen für die Genomsequenzierung in Deutschland.
+Dieser IG ist eine Community-Vorarbeit — er ist nicht normativ und ersetzt nicht die offizielle Spezifikation des BfArM. Er soll zwei Zwecken dienen:
+
+- **Community-Mapping-Support**: Unterstützung von Einrichtungen, die MII-KDS-Daten für MVGenomSeq aufbereiten oder MVGenomSeq-Daten in FHIR-Repositorien integrieren möchten.
+- **Vorbereitung einer FHIR-nativen Meldung**: Grundlage für eine perspektivische Diskussion, ob und wie MVGenomSeq-Meldungen künftig direkt in FHIR erfolgen könnten.
+
+Die drei beschriebenen Ansätze decken unterschiedliche Integrationsrichtungen und Zeithorizonte ab.
 
 ## Hintergrund zu MVGENOMSEQ
 
