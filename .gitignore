@@ -33,6 +33,8 @@ npm-debug.log*
 # PlantUML generated images (optional)
 input/images/*.png
 input/images/*.svg
+# Keep manually created diagrams
+!input/images/fhir-to-mvgenomseq-mapping.png
 
 # Local configuration
 .env

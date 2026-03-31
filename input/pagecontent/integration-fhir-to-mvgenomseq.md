@@ -57,6 +57,8 @@ Das MII-Onkologie-Modul enthält ein Logical Model, das die Abbildung des MVGeno
 
 ## Ressourcen-Mapping
 
+{% include img.html img="fhir-to-mvgenomseq-mapping.png" caption="Übersicht: FHIR-Ressourcen zu MVGenomSeq-Feldern" width="80%" %}
+
 | FHIR-Ressource | MII-Profil | MVGenomSeq-Ziel |
 |---|---|---|
 | `Patient` | PatientPseudonymisiert (`base`) | `patient` |
