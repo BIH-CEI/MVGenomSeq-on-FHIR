@@ -54,10 +54,64 @@ jobs:
           mkdir -p input-cache
           curl -L https://github.com/HL7/fhir-ig-publisher/releases/latest/download/publisher.jar -o input-cache/publisher.jar
 
+      # SU-TermServ (MII-Terminologieserver) per mTLS-Proxy, Zertifikat aus den
+      # Org-Secrets. Ohne Zertifikat oder bei nicht erreichbarem Proxy faellt der
+      # Build auf https://tx.fhir.org zurueck (dann fehlen BfArM-Systeme wie
+      # ICD-10-GM in der Validierung, Build steht aber).
+      - name: Start SU-TermServ proxy (falls Zertifikat vorhanden)
+        id: tx
+        env:
+          CDS_DEV_CLIENT_CERT: ${{ secrets.CDS_DEV_CLIENT_CERT }}
+          CDS_DEV_CLIENT_KEY: ${{ secrets.CDS_DEV_CLIENT_KEY }}
+          CDS_DEV_CLIENT_CERT_PASSWORD: ${{ secrets.CDS_DEV_CLIENT_CERT_PASSWORD }}
+        run: |
+          if [ -z "$CDS_DEV_CLIENT_CERT" ]; then
+            echo "tx=https://tx.fhir.org" >> "$GITHUB_OUTPUT"
+            echo "::notice::Kein SU-TermServ-Zertifikat — Fallback auf https://tx.fhir.org."
+            exit 0
+          fi
+          mkdir -p nginx/certs
+          echo "$CDS_DEV_CLIENT_CERT" | base64 -d > nginx/certs/client-cert.pem
+          echo "$CDS_DEV_CLIENT_KEY" | base64 -d > nginx/certs/client-key-encrypted.key
+          openssl rsa -in nginx/certs/client-key-encrypted.key \
+            -out nginx/certs/client-key.key -passin env:CDS_DEV_CLIENT_CERT_PASSWORD
+          docker run -d --name nginx-proxy \
+            -v "$PWD/.github/workflows/su-termserv-nginx.conf:/etc/nginx/nginx.conf:ro" \
+            -v "$PWD/nginx/certs:/etc/nginx/certs:ro" \
+            -p 8090:80 nginx:alpine
+          sleep 5
+          curl -fsS -o /dev/null -H "Accept: application/fhir+json" \
+            --max-time 300 "http://127.0.0.1:8090/fhir/metadata" \
+            && { echo "tx=http://127.0.0.1:8090/fhir" >> "$GITHUB_OUTPUT"; echo "::notice::SU-TermServ-Proxy aktiv."; } \
+            || { echo "::warning::SU-TermServ-Proxy nicht erreichbar — Fallback tx.fhir.org"; echo "tx=https://tx.fhir.org" >> "$GITHUB_OUTPUT"; }
+
       - name: Run IG Publisher
+        env:
+          TX: ${{ steps.tx.outputs.tx }}
         run: |
           export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Dfile.encoding=UTF-8"
-          java -jar input-cache/publisher.jar -ig . 2>&1 | tee ig-publisher.log
+          # -fhir-settings allowlistet den lokalen Proxy (plain HTTP, private
+          # Netz) gegen die SSRF-Haertung des Publishers ab 2.3.1.
+          # timeout faengt haengende Terminologie-Calls; ein Fehlschlag mit
+          # SU-TermServ faellt auf den oeffentlichen Server zurueck.
+          build() {
+            timeout 60m java -jar input-cache/publisher.jar -ig . -tx "$1" \
+              -fhir-settings "$GITHUB_WORKSPACE/.github/fhir-settings.json" 2>&1 | tee ig-publisher.log
+            return "${PIPESTATUS[0]}"
+          }
+          echo "Terminologieserver: $TX"
+          build "$TX" || { echo "::warning::Build mit $TX fehlgeschlagen — Retry mit https://tx.fhir.org"; build "https://tx.fhir.org"; }
+
+      - name: Stop SU-TermServ proxy
+        if: always()
+        run: docker rm -f nginx-proxy 2>/dev/null || true
+
+      - name: Summarize QA
+        if: always()
+        run: |
+          if [ -f output/qa.json ]; then
+            jq -r '"QA (\(.tool)): \(.errs) errors, \(.warnings) warnings, \(.hints) hints"' output/qa.json >> "$GITHUB_STEP_SUMMARY" || true
+          fi
 
       - name: Upload Build Logs
         if: always()
