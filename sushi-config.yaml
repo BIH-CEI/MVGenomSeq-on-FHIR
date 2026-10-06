@@ -24,12 +24,13 @@ publisher:
 # use cases, the value can be an object with keys for id, uri, and version.
 #
 dependencies:
-    de.medizininformatikinitiative.kerndatensatz.base: 2026.0.0
-    de.medizininformatikinitiative.kerndatensatz.consent: 2026.0.1-rc-1
-    de.medizininformatikinitiative.kerndatensatz.molgen: 2026.0.4
-    de.medizininformatikinitiative.kerndatensatz.onkologie: 2026.0.3
-    de.medizininformatikinitiative.kerndatensatz.seltene: 2026.0.0
-    de.medizininformatikinitiative.kerndatensatz.mtb: 2026.0.0
+    de.medizininformatikinitiative.kerndatensatz.base: 2027.0.0-ballot
+    de.medizininformatikinitiative.kerndatensatz.consent: 2027.0.0-ballot
+    de.einwilligungsmanagement: 2.0.4
+    de.medizininformatikinitiative.kerndatensatz.molgen: 2027.0.0-ballot.1
+    de.medizininformatikinitiative.kerndatensatz.onkologie: 2027.0.0-ballot.1
+    de.medizininformatikinitiative.kerndatensatz.seltene: 2027.0.0-ballot
+    de.medizininformatikinitiative.kerndatensatz.mtb: 2027.0.0-ballot.1
     hl7.fhir.uv.genomics-reporting: 3.0.0
 #   hl7.fhir.us.core: 3.1.0
 #   hl7.fhir.us.mcode:

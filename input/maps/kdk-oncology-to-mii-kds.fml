@@ -1,0 +1,83 @@
+/// KDK Onkologie (BfArM MVGenomSeq) -> MII KDS FHIR Bundle
+/// STATUS: DRAFT / Phase 1. metaData->Person+Consent konkret; case/plan/molecular/
+/// followUp geruestet (Kern + TODO). Validierung via Matchbox ausstehend.
+/// Quelle: input/fsh/logical-models/KdkOncologyModel.fsh (aus KDK-Schema v2.3 generiert)
+
+map "https://bih-cei.github.io/MVGenomSeq-on-FHIR/StructureMap/kdk-oncology-to-mii-kds" = "KdkOncologyToMiiKds"
+
+uses "https://bih-cei.github.io/MVGenomSeq-on-FHIR/StructureDefinition/kdk-oncology-model" alias KdkOncology as source
+uses "http://hl7.org/fhir/StructureDefinition/Bundle"   alias Bundle   as target
+uses "http://hl7.org/fhir/StructureDefinition/Patient"  alias Patient  as produced
+uses "http://hl7.org/fhir/StructureDefinition/Consent"  alias Consent  as produced
+uses "http://hl7.org/fhir/StructureDefinition/Condition" alias Condition as produced
+uses "http://hl7.org/fhir/StructureDefinition/CarePlan" alias CarePlan as produced
+uses "http://hl7.org/fhir/StructureDefinition/Observation" alias Observation as produced
+
+group KdkOncologyToBundle(source src : KdkOncology, target bundle : Bundle) {
+  src -> bundle.type = 'transaction' "bundleType";
+
+  // --- metaData -> Person + Consent -----------------------------------------
+  src.metaData as md -> bundle.entry as e, e.resource = create('Patient') as pat then {
+    md -> pat.meta as m, m.profile = 'https://www.medizininformatik-initiative.de/fhir/core/modul-person/StructureDefinition/PatientPseudonymisiert' "patProfile";
+    md.gender as g       -> pat.gender = g "gender";                 // Enum male/female/other/unknown identisch zu FHIR
+    md.birthDate as b    -> pat.birthDate = b "birthDate";           // YYYY-MM
+    // ACHTUNG Pseudonym-Domaenen: die KDK-TAN (RKI/KDK-Vertrauensstelle) ist NICHT
+    // das MII-Pseudonym (DIZ/MII-Treuhandstelle). Sie wird nur als eigener,
+    // klar benannter Zusatz-Identifier gefuehrt und DARF NICHT in den
+    // PatientPseudonymisiert-Pseudonym-Slot geschrieben werden.
+    // Das MII-Pseudonym ist aus dem KDK-Payload NICHT ableitbar -> muss im DIZ
+    // per Record-Linkage/Identitaetsmanagement gesetzt werden (Consent-gated:
+    // reIdentification/caseIdentification). Bleibt in dieser Map leer.
+    md.tanC as t         -> pat.identifier as id then {
+                              t -> id.system = 'https://www.bfarm.de/fhir/mvgenomseq/sid/kdk-tan' "tanSys";
+                              t -> id.value = t "tanVal";
+                            } "kdkTanIdentifier";
+    // TODO addressAGS -> pat.address + destatis/ags-Extension (Extension-URL verifizieren)
+    // TODO localCaseId -> weiterer pat.identifier (LE-lokal, ebenfalls eigene Domaene)
+  } "metaDataPatient";
+
+  // mvConsent -> Consent (MII Einwilligung)
+  src.metaData.mvConsent as mvc -> bundle.entry as e2, e2.resource = create('Consent') as cons then {
+    mvc -> cons.meta as m2, m2.profile = 'https://www.medizininformatik-initiative.de/fhir/modul-consent/StructureDefinition/mii-pr-consent-einwilligung' "consProfile";
+    mvc -> cons.status = 'active' "consStatus";
+    mvc.scope as sc -> cons.provision as prov then {
+      sc.type as ty   -> prov.type = ty "provType";       // permit/deny
+      sc.date as dt   -> prov.period as per, per.start = dt "provStart";
+      // TODO sc.domain (mvSequencing/reIdentification/caseIdentification) -> prov.provision.code
+      //      erst nach Registrierung im MII-Consent-Policy-CodeSystem
+    } "mvProvision";
+  } "metaDataConsent";
+
+  // TODO researchConsents[].scope -> separate MII-Consent-Ressource (Pass-through)
+  // TODO coverageType -> Coverage-Ressource (Coverage.type)
+
+  // --- case.diagnosisOd -> MTB Diagnose Primaertumor (GERUEST) ---------------
+  src.case as c -> bundle.entry as e3, e3.resource = create('Condition') as cond then {
+    c -> cond.meta as m3, m3.profile = 'https://www.medizininformatik-initiative.de/fhir/ext/modul-mtb/StructureDefinition/mii-pr-mtb-diagnose-primaertumor' "condProfile";
+    c.diagnosisOd as d then {
+      d.mainDiagnosis as md2 -> cond.code as cc then {   // ICD-10-GM
+        md2.code as co   -> cc.coding as cg, cg.code = co "diagCode";
+        md2.system as sy -> cg.system = sy "diagSys";
+      } "diagCode";
+      // TODO histology/topography (ICD-O-3) -> Morphologie-/Topographie-Extensions
+      // TODO ecogPerformanceStatusScore -> MTB ECOG Observation
+    } "diagnosisOd";
+  } "caseDiagnose";
+
+  // --- molecular.smallVariants[] -> MTB Einfache Variante (GERUEST) ----------
+  src.molecular as mol then {
+    mol.smallVariants as sv -> bundle.entry as e4, e4.resource = create('Observation') as obs then {
+      sv -> obs.meta as m4, m4.profile = 'https://www.medizininformatik-initiative.de/fhir/ext/modul-mtb/StructureDefinition/mii-pr-mtb-einfache-variante' "varProfile";
+      sv -> obs.status = 'final' "varStatus";
+      // TODO gene/HGVS/genomicSource -> Observation.component (representative-coding-hgvs etc.)
+    } "smallVariant";
+    // TODO copyNumberVariants / structuralVariants / expressionVariants
+  } "molecular";
+
+  // --- plan -> MTB Therapieplan (GERUEST) ------------------------------------
+  // TODO src.plan.recommendedSystemicTherapies[] -> mii-pr-mtb-therapieplan (CarePlan)
+  // TODO src.plan.recommendedStudies[] -> MTB Studienempfehlung
+
+  // --- followUp -> MTB Verlauf (GERUEST) -------------------------------------
+  // TODO src.followUp.followUpOds[] -> mii-pr-mtb-verlauf (Observation)
+}

@@ -38,3 +38,7 @@ input/images/*.svg
 
 # Local configuration
 .env
+
+# Synthetische-Daten-Dashboard (lokal, nicht committen — abgeleitet aus
+# lokalen synthetischen Testdaten, enthält Struktur/Dateinamen der Testdaten)
+/analysis/

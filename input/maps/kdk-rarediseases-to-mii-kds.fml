@@ -1,0 +1,68 @@
+/// KDK Seltene Erkrankungen (BfArM MVGenomSeq) -> MII KDS FHIR Bundle
+/// STATUS: DRAFT / Phase 1. metaData->Person+Consent konkret; case/plan/molecular/
+/// followUp geruestet (Kern + TODO). Validierung via Matchbox ausstehend.
+/// Quelle: input/fsh/logical-models/KdkRareDiseasesModel.fsh (aus KDK-Schema v2.3)
+
+map "https://bih-cei.github.io/MVGenomSeq-on-FHIR/StructureMap/kdk-rarediseases-to-mii-kds" = "KdkRareDiseasesToMiiKds"
+
+uses "https://bih-cei.github.io/MVGenomSeq-on-FHIR/StructureDefinition/kdk-rare-diseases-model" alias KdkRd as source
+uses "http://hl7.org/fhir/StructureDefinition/Bundle"    alias Bundle    as target
+uses "http://hl7.org/fhir/StructureDefinition/Patient"   alias Patient   as produced
+uses "http://hl7.org/fhir/StructureDefinition/Consent"   alias Consent   as produced
+uses "http://hl7.org/fhir/StructureDefinition/Condition" alias Condition as produced
+uses "http://hl7.org/fhir/StructureDefinition/Observation" alias Observation as produced
+
+group KdkRareDiseasesToBundle(source src : KdkRd, target bundle : Bundle) {
+  src -> bundle.type = 'transaction' "bundleType";
+
+  // --- metaData -> Person + Consent (identisch zur Onkologie-Strecke) --------
+  src.metaData as md -> bundle.entry as e, e.resource = create('Patient') as pat then {
+    md -> pat.meta as m, m.profile = 'https://www.medizininformatik-initiative.de/fhir/core/modul-person/StructureDefinition/PatientPseudonymisiert' "patProfile";
+    md.gender as g    -> pat.gender = g "gender";
+    md.birthDate as b -> pat.birthDate = b "birthDate";
+    // ACHTUNG Pseudonym-Domaenen: KDK-TAN (RKI/KDK) != MII-Pseudonym (DIZ). Nur als
+    // eigener Zusatz-Identifier fuehren, NICHT in den Pseudonym-Slot. MII-Pseudonym
+    // ist aus KDK nicht ableitbar -> DIZ-Record-Linkage (Consent: reIdentification).
+    md.tanC as t      -> pat.identifier as id then {
+                           t -> id.system = 'https://www.bfarm.de/fhir/mvgenomseq/sid/kdk-tan' "tanSys";
+                           t -> id.value = t "tanVal";
+                         } "kdkTanIdentifier";
+    // TODO addressAGS -> pat.address + destatis/ags-Extension
+  } "metaDataPatient";
+
+  src.metaData.mvConsent as mvc -> bundle.entry as e2, e2.resource = create('Consent') as cons then {
+    mvc -> cons.meta as m2, m2.profile = 'https://www.medizininformatik-initiative.de/fhir/modul-consent/StructureDefinition/mii-pr-consent-einwilligung' "consProfile";
+    mvc -> cons.status = 'active' "consStatus";
+    mvc.scope as sc -> cons.provision as prov then {
+      sc.type as ty -> prov.type = ty "provType";
+      sc.date as dt -> prov.period as per, per.start = dt "provStart";
+      // TODO sc.domain -> prov.provision.code (nach Policy-CodeSystem-Registrierung)
+    } "mvProvision";
+  } "metaDataConsent";
+
+  // TODO researchConsents[].scope -> separate MII-Consent-Ressource
+  // TODO coverageType -> Coverage-Ressource
+
+  // --- case -> MII Diagnose (Condition) (GERUEST) ----------------------------
+  src.case as c -> bundle.entry as e3, e3.resource = create('Condition') as cond then {
+    c -> cond.meta as m3, m3.profile = 'https://www.medizininformatik-initiative.de/fhir/core/modul-diagnose/StructureDefinition/Diagnose' "condProfile";
+    // TODO Diagnose-Code (ICD-10-GM / ORPHA / AlphaID) -> Condition.code
+    // TODO HPO-Terme -> mii-pr-seltene-hpo-assessment (Observation)
+  } "caseDiagnose";
+
+  // --- molecular -> MolGen Variante (Observation) (GERUEST) ------------------
+  src.molecular as mol then {
+    mol.smallVariants as sv -> bundle.entry as e4, e4.resource = create('Observation') as obs then {
+      sv -> obs.meta as m4, m4.profile = 'https://www.medizininformatik-initiative.de/fhir/ext/modul-molgen/StructureDefinition/mii-pr-molgen-variante' "varProfile";
+      sv -> obs.status = 'final' "varStatus";
+      // TODO gene/HGVS/genomicSource -> Observation.component
+    } "smallVariant";
+  } "molecular";
+
+  // --- plan -> Seltene Therapie-/Studienempfehlung (GERUEST) -----------------
+  // TODO src.plan.recommendedTherapies[] -> mii-pr-seltene-therapieempfehlung
+  // TODO src.plan.recommendedStudies[] -> Seltene Studienempfehlung
+
+  // --- followUp (GERUEST) ----------------------------------------------------
+  // TODO src.followUp -> MII Verlauf
+}
