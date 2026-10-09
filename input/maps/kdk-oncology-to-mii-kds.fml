@@ -1,7 +1,7 @@
-/// KDK Onkologie (BfArM MVGenomSeq) -> MII KDS FHIR Bundle
-/// STATUS: DRAFT / Phase 1. metaData->Person+Consent konkret; case/plan/molecular/
-/// followUp geruestet (Kern + TODO). Validierung via Matchbox ausstehend.
-/// Quelle: input/fsh/logical-models/KdkOncologyModel.fsh (aus KDK-Schema v2.3 generiert)
+// KDK Onkologie (BfArM MVGenomSeq) -> MII KDS FHIR Bundle
+// STATUS: DRAFT / Phase 1. metaData->Person+Consent konkret; case/plan/molecular/
+// followUp geruestet (Kern + TODO). Validierung via Matchbox ausstehend.
+// Quelle: input/fsh/logical-models/KdkOncologyModel.fsh (aus KDK-Schema v2.3 generiert)
 
 map "https://bih-cei.github.io/MVGenomSeq-on-FHIR/StructureMap/kdk-oncology-to-mii-kds" = "KdkOncologyToMiiKds"
 

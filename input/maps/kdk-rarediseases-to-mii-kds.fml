@@ -1,7 +1,7 @@
-/// KDK Seltene Erkrankungen (BfArM MVGenomSeq) -> MII KDS FHIR Bundle
-/// STATUS: DRAFT / Phase 1. metaData->Person+Consent konkret; case/plan/molecular/
-/// followUp geruestet (Kern + TODO). Validierung via Matchbox ausstehend.
-/// Quelle: input/fsh/logical-models/KdkRareDiseasesModel.fsh (aus KDK-Schema v2.3)
+// KDK Seltene Erkrankungen (BfArM MVGenomSeq) -> MII KDS FHIR Bundle
+// STATUS: DRAFT / Phase 1. metaData->Person+Consent konkret; case/plan/molecular/
+// followUp geruestet (Kern + TODO). Validierung via Matchbox ausstehend.
+// Quelle: input/fsh/logical-models/KdkRareDiseasesModel.fsh (aus KDK-Schema v2.3)
 
 map "https://bih-cei.github.io/MVGenomSeq-on-FHIR/StructureMap/kdk-rarediseases-to-mii-kds" = "KdkRareDiseasesToMiiKds"
 
